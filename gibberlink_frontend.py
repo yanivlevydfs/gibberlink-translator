@@ -13,7 +13,7 @@ def initialize_systems():
         st.error(f"Error initializing ggwave: {e}")
         return None
     try:
-        genai.configure(api_key="your_gemini_api_key")  # Ensure your API key is correctly added
+        genai.configure(api_key="your_gemini_api_key")
     except Exception as e:
         st.error(f"Error initializing Gemini API: {e}")
         return None
@@ -55,13 +55,21 @@ def main():
     st.title("GibberLink Translator")
     st.subheader("Listen to AI Agents' Communication and Translate")
 
-    listening = st.button("Start Listening")
-    stop_listening = st.button("Stop Listening")
+    # Use columns for layout
+    col1, col2 = st.columns([3, 1])
+
+    with col1:
+        listening = st.button("Start Listening")
+        stop_listening = st.button("Stop Listening")
+    
+    with col2:
+        st.image("your_icon_path.png", width=100)  # Add an icon or image for visual appeal
 
     if listening:
-        st.write("Listening... Please wait.")
         with sd.InputStream(callback=lambda indata, frames, time, status: callback(indata, frames, time, status, audio_queue), 
                             samplerate=44100, channels=1, dtype='int16'):
+            st.write("Listening... Please wait.")
+            progress_bar = st.progress(0)
             while not stop_listening:
                 if not audio_queue.empty():
                     audio_data = audio_queue.get()
@@ -70,8 +78,10 @@ def main():
                         translation = translate_message(decoded_msg)
                         st.write(f"**AI:** {decoded_msg}")
                         st.write(f"**Translated:** {translation}")
+                    progress_bar.progress(50)  # Update progress as per the task progress
                 else:
                     st.write("Awaiting audio data...")
+            progress_bar.progress(100)  # Complete progress bar when done
     else:
         st.write("Press 'Start Listening' to begin capturing audio.")
 
