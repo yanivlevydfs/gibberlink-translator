@@ -9,7 +9,7 @@ Installation
 
 Clone the repository:
 
-git clone https://github.com/yourusername/gibberlink-translator.git
+git clone https://github.com/yanivlevydfs/gibberlink-translator.git
 cd gibberlink-translator
 
 Install dependencies:
